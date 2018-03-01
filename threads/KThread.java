@@ -286,6 +286,30 @@ public class KThread {
 		Lib.assertTrue(this != currentThread);
 		
 		// implement the join() method here (Proj1, Task 1)
+		
+		// If the thread is already finished, return immediately
+		if (status == statusFinished) {
+			return;
+		}
+		
+		// 
+		boolean interruptStatus = Machine.interrupt().disable();
+		
+		// 
+		if (joinQueue == null) {
+			joinQueue = ThreadedKernel.scheduler.newThreadQueue(true);
+			joinQueue.acquire(this);
+		}
+		
+		// This thread must not be the current thread
+		if (currentThread != this && status != statusFinished) {
+			joinQueue.waitForAccess(currentThread);
+			currentThread.sleep();
+		}
+		
+		// 
+		Machine.interrupt().restore(interruptStatus);
+		
 
 	}
 
