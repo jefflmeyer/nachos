@@ -292,10 +292,10 @@ public class KThread {
 			return;
 		}
 		
-		// 
+		// interrupt the machine, disable the current process
 		boolean interruptStatus = Machine.interrupt().disable();
 		
-		// 
+		// Create a joinQueue if it is empty, and add this thread to it
 		if (joinQueue == null) {
 			joinQueue = ThreadedKernel.scheduler.newThreadQueue(true);
 			joinQueue.acquire(this);
@@ -307,7 +307,7 @@ public class KThread {
 			currentThread.sleep();
 		}
 		
-		// 
+		// resume the current process 
 		Machine.interrupt().restore(interruptStatus);
 		
 
