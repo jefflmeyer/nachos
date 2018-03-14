@@ -1,6 +1,7 @@
 package nachos.threads;
 
 import nachos.machine.*;
+import java.util.LinkedList;
 
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
@@ -57,6 +58,7 @@ public class KThread {
 		if (currentThread != null) {
 			tcb = new TCB();
 		} else {
+
 			readyQueue = ThreadedKernel.scheduler.newThreadQueue(false);
 			readyQueue.acquire(this);
 
@@ -204,6 +206,10 @@ public class KThread {
 
 		currentThread.status = statusFinished;
 
+		for(int i = 0; i < waitingThread.size(); i++){
+			(currentThread.waitingThread.removeFirst()).ready();
+		}
+
 		sleep();
 	}
 
@@ -282,34 +288,30 @@ public class KThread {
 	 * is not guaranteed to return. This thread must not be the current thread.
 	 */
 	public void join() {
+
+		// [Proj1, Task 1] Implement KThread.join() method
+
+		// if method is called as B.join(), current thread is A
+		// we are executing B's join() method
+
 		Lib.debug(dbgThread, "Joining to thread: " + toString());
 		Lib.assertTrue(this != currentThread);
-		
-		// implement the join() method here (Proj1, Task 1)
-		
-		// If the thread is already finished, return immediately
-		if (status == statusFinished) {
+
+		// If the thread B is already finished, return immediately
+		if (this.status == statusFinished) {
 			return;
 		}
+		// (i) Save a reference to the thread calling B.join()
+		waitingThread.addFirst(currentThread);
 		
-		// interrupt the machine, disable the current process
-		boolean interruptStatus = Machine.interrupt().disable();
+		Machine.interrupt().disable();
 		
-		// Create a joinQueue if it is empty, and add this thread to it
-		if (joinQueue == null) {
-			joinQueue = ThreadedKernel.scheduler.newThreadQueue(true);
-			joinQueue.acquire(this);
-		}
-		
-		// This thread must not be the current thread
-		if (currentThread != this && status != statusFinished) {
-			joinQueue.waitForAccess(currentThread);
-			currentThread.sleep();
-		}
-		
-		// resume the current process 
-		Machine.interrupt().restore(interruptStatus);
-		
+		// (ii) Put B to sleep
+		this.sleep();
+
+		Machine.interrupt().enable();
+
+		// We wake it back up in the finish() method
 
 	}
 
@@ -479,4 +481,7 @@ public class KThread {
 	private static KThread currentThread = null;
 	private static KThread toBeDestroyed = null;
 	private static KThread idleThread = null;
+
+	// Added for the join() method
+	private static LinkedList<KThread> waitingThread = new LinkedList<KThread>();
 }
