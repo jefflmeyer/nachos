@@ -21,18 +21,6 @@ public class Communicator {
 		this.speaker = new Condition2(lock);
 	}
 
-    /**
-     * Wait for a thread to listen through this communicator, and then transfer
-     * <i>word</i> to the listener.
-     *
-     * <p>
-     * Does not return until this thread is paired up with a listening thread.
-     * Exactly one listener should receive <i>word</i>.
-     *
-     * @param	word	the integer to transfer.
-     */
-    public void (int word) {
-    }
 	/**
 	 * Wait for a thread to listen through this communicator, and then transfer
 	 * <i>word</i> to the listener.
