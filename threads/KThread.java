@@ -206,7 +206,7 @@ public class KThread {
 
 		currentThread.status = statusFinished;
 
-		for(int i = 0; i < waitingThread.size(); i++){
+		for (int i = 0; i < waitingThread.size(); i++) {
 			(currentThread.waitingThread.removeFirst()).ready();
 		}
 
@@ -303,9 +303,9 @@ public class KThread {
 		}
 		// (i) Save a reference to the thread calling B.join()
 		waitingThread.addFirst(currentThread);
-		
+
 		Machine.interrupt().disable();
-		
+
 		// (ii) Put B to sleep
 		this.sleep();
 
