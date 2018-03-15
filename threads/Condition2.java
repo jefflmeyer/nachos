@@ -48,10 +48,10 @@ public class Condition2 {
 	 */
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-		if(waitQueue.isEmpty())
+		if (waitQueue.isEmpty())
 			return;
 		Machine.interrupt().disable();
-		((KThread)waitQueue.removeFirst()).ready();
+		((KThread) waitQueue.removeFirst()).ready();
 		Machine.interrupt().enable();
 	}
 
@@ -61,9 +61,9 @@ public class Condition2 {
 	 */
 	public void wakeAll() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-		
+
 		Machine.interrupt().disable();
-		while (waitQueue.isEmpty() == false){
+		while (waitQueue.isEmpty() == false) {
 			wake();
 		}
 		Machine.interrupt().enable();
