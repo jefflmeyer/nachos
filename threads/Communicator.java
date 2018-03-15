@@ -26,7 +26,7 @@ public class Communicator {
      *
      * @param	word	the integer to transfer.
      */
-    public void speak(int word) {
+    public void (int word) {
     }
 
     /**
